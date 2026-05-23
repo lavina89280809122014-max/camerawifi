@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
 
     steps:
       - uses: actions/checkout@v3
@@ -33,7 +34,7 @@ jobs:
           mv cmdline-tools/* "${ANDROID_SDK_ROOT}/cmdline-tools/latest/"
           rm -rf /tmp/cmdline-tools.zip /tmp/cmdline-tools
 
-      - name: Update PATH and accept licenses, install SDK packages
+      - name: Update PATH, accept licenses and install SDK packages
         run: |
           export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
           export PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools:${PATH}"
@@ -50,10 +51,11 @@ jobs:
         run: |
           export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
           export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+          export PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools:${PATH}"
           buildozer -v android debug
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: camerawifi-apk
           path: bin/*.apk
